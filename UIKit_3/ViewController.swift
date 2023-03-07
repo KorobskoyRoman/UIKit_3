@@ -47,22 +47,18 @@ private extension ViewController {
 
     @objc
     func sliderDidEndEditing(_ sender: UISlider) {
-//    func sliderDidEndEditing(_ sender: UITapGestureRecognizer) {
-        guard slider.value != slider.maximumValue
-//              sender.state == .ended
-        else { return }
-        let sliderValue = CGFloat(slider.maximumValue)
+        guard slider.value != slider.maximumValue else { return }
+        let sliderValue = CGFloat(sender.value)
 
-//        let viewWidth = view.bounds.width
-//        let roundedViewWidth = roundedView.frame.size.width
-//        let centerView = roundedViewWidth / 2
-//        let value = (viewWidth * sliderValue * (1.0 - roundedViewWidth / viewWidth)) + centerView
-//
-//        roundedView.center.x = value
-        UIView.animate(withDuration: 0.2) {
-            self.slider.value = 1.0
-            self.slider.layoutIfNeeded()
-            self.roundedView.layoutIfNeeded()
+        let viewWidth = view.bounds.width
+        let roundedViewWidth = roundedView.frame.size.width
+        let centerView = roundedViewWidth / 2
+        let value = (viewWidth * sliderValue * (1.0 - roundedViewWidth / viewWidth)) + centerView
+
+        UIView.animate(withDuration: 0.5) {
+            self.slider.setValue(1, animated: true)
+            self.roundedView.center.x = value
+            self.sliderDidMove(self.slider)
         }
     }
 }
@@ -79,15 +75,12 @@ private extension ViewController {
 
         setConstraints()
         slider.addTarget(self, action: #selector(sliderDidMove(_:)), for: .valueChanged)
-//        slider.addTarget(self, action: #selector(sliderDidEndEditing(_:)), for: )
-
-//        let panGestureRecognizer = UITapGestureRecognizer()
-//        panGestureRecognizer.addTarget(self, action: #selector(sliderDidEndEditing(_:)))
-//        slider.addGestureRecognizer(panGestureRecognizer)
+        slider.addTarget(self, action: #selector(sliderDidEndEditing(_:)), for: .touchUpInside)
     }
 
     func setConstraints() {
         let marginsGuide = view.layoutMarginsGuide
+//        let margins = view.layoutMargins // ???
 
         NSLayoutConstraint.activate([
             roundedView.topAnchor.constraint(equalTo: marginsGuide.topAnchor, constant: 20),
